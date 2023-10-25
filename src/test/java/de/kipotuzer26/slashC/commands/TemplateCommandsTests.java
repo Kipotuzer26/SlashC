@@ -1,8 +1,8 @@
-package net.silthus.template.commands;
+package de.kipotuzer26.slashC.commands;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.template.Constants;
-import net.silthus.template.TestBase;
+import de.kipotuzer26.slashC.Constants;
+import de.kipotuzer26.slashC.TestBase;
 import org.bukkit.Statistic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

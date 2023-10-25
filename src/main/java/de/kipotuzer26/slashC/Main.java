@@ -1,15 +1,15 @@
-package net.silthus.template;
+package de.kipotuzer26.slashC;
 
 import co.aikar.commands.PaperCommandManager;
-import kr.entree.spigradle.annotations.PluginMain;
+import de.kipotuzer26.slashC.commands.SlashC;
+import de.kipotuzer26.slashC.listener.Listeners;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
-import net.silthus.template.commands.TemplateCommands;
-import net.silthus.template.integrations.vault.VaultProvider;
+import de.kipotuzer26.slashC.commands.TemplateCommands;
+import de.kipotuzer26.slashC.integrations.vault.VaultProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
@@ -26,21 +26,25 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TemplatePlugin extends JavaPlugin implements Listener {
+public class Main extends JavaPlugin implements Listener {
+
+    static Main plugin;
+    public static final String GUEST = "verifier.guest";
+    public static final String USER = "verifier.user";
 
     @Getter
     @Accessors(fluent = true)
-    private static TemplatePlugin instance;
+    private static Main instance;
     @Getter
     @Setter(AccessLevel.PACKAGE)
     private VaultProvider vault;
     private PaperCommandManager commandManager;
 
-    public TemplatePlugin() {
+    public Main() {
         instance = this;
     }
 
-    public TemplatePlugin(
+    public Main(
             JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
@@ -48,17 +52,24 @@ public class TemplatePlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        plugin = this;
+
         saveDefaultConfig();
 
         setupVaultIntegration();
         setupCommands();
 
+
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        getLogger().info("Player joined.");
+    public void onDisable() {
+        super.onDisable();
+        SlashC.removeAllPlayers();
+    }
+
+    public static Main getPlugin() {
+        return plugin;
     }
 
     @EventHandler
@@ -85,11 +96,13 @@ public class TemplatePlugin extends JavaPlugin implements Listener {
     }
 
     private void setupCommands() {
+
+        this.getServer().getPluginManager().registerEvents(new Listeners(), plugin);
         commandManager = new PaperCommandManager(this);
         commandManager.enableUnstableAPI("help");
-
         loadCommandLocales(commandManager);
 
+        commandManager.registerCommand(new SlashC());
         commandManager.registerCommand(new TemplateCommands());
     }
 

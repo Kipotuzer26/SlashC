@@ -2,4 +2,6 @@
 commands:
   descriptions:
     info: 'Prints out the players name and play time.'
+    c: 'Limited spectator for everyone!'
   info: 'Your name is: {player}. Playtime: {play_time}.'
+  c:

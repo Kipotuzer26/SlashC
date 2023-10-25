@@ -1,4 +1,4 @@
-package net.silthus.template;
+package de.kipotuzer26.slashC;
 
 public final class Constants {
 

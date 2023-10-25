@@ -1,7 +1,7 @@
-package net.silthus.template.integrations.vault;
+package de.kipotuzer26.slashC.integrations.vault;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.template.TestBase;
+import de.kipotuzer26.slashC.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

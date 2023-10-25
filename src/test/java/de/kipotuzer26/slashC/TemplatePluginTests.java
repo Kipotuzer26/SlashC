@@ -1,4 +1,4 @@
-package net.silthus.template;
+package de.kipotuzer26.slashC;
 
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.jupiter.api.Test;
