@@ -150,8 +150,10 @@ public class Listeners implements Listener {
     public void onPlayerLeave(PlayerQuitEvent e) {
         PrimarySkinColor.playerColor.remove(e.getPlayer().getUniqueId());
 //        System.out.println("removed Player from Buffer");
-        if(SlashC.ridingEntity.containsValue(e.getPlayer().getVehicle().getUniqueId()) && ! isInMode(e.getPlayer())){
-            e.getPlayer().leaveVehicle();
+        if(e.getPlayer().getVehicle() != null) {
+            if (SlashC.ridingEntity.containsValue(e.getPlayer().getVehicle().getUniqueId()) && !isInMode(e.getPlayer())) {
+                e.getPlayer().leaveVehicle();
+            }
         }
         if (SlashC.isInMode(e.getPlayer())) {
             SlashC.removePlayer(e.getPlayer());
