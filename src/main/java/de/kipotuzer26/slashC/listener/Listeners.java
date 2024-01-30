@@ -2,29 +2,29 @@ package de.kipotuzer26.slashC.listener;
 
 import de.kipotuzer26.slashC.Main;
 import de.kipotuzer26.slashC.commands.SlashC;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import de.kipotuzer26.slashC.util.PrimarySkinColor;
+import io.papermc.paper.event.entity.EntityMoveEvent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.bukkit.util.io.BukkitObjectInputStream;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
-import static de.kipotuzer26.slashC.commands.SlashC.PREFIX;
+import static de.kipotuzer26.slashC.commands.SlashC.*;
 
 public class Listeners implements Listener {
     @EventHandler
@@ -148,9 +148,19 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
+        PrimarySkinColor.playerColor.remove(e.getPlayer().getUniqueId());
+//        System.out.println("removed Player from Buffer");
+        if(SlashC.ridingEntity.containsValue(e.getPlayer().getVehicle().getUniqueId()) && ! isInMode(e.getPlayer())){
+            e.getPlayer().leaveVehicle();
+        }
         if (SlashC.isInMode(e.getPlayer())) {
             SlashC.removePlayer(e.getPlayer());
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e){
+        PrimarySkinColor.loadColor(e.getPlayer().getUniqueId());
     }
 
     @EventHandler
@@ -164,14 +174,32 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
+    public void vehicleMove(VehicleMoveEvent e){
+        if(!SlashC.ridingEntity.containsValue(e.getVehicle().getUniqueId())){
+            return;
+        }
+        SlashC.playersInSpectator.replace(getKeyByValue(ridingEntity, e.getVehicle().getUniqueId()), e.getVehicle().getLocation());
+    }
+
+    @EventHandler
     public void onSpectator(PlayerCommandPreprocessEvent e){
         if(!(e.getMessage().contains("gamemode")&&e.getMessage().split(" ").length == 2)){ return;}
+            if(e.getPlayer().isOp() && !SlashC.isInMode(e.getPlayer()) && !e.getMessage().contains("spectator")){return;}
             e.setCancelled(true);
             if(e.getPlayer().isOp()){
                 e.getPlayer().sendMessage(PREFIX + ChatColor.GREEN + "Für Vanilla Spectator: /gamemode specator <Nutzer>");
             }
             SlashC.onCommand(e.getPlayer());
 
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
 }

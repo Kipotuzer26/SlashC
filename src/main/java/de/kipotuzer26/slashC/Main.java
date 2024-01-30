@@ -3,6 +3,7 @@ package de.kipotuzer26.slashC;
 import co.aikar.commands.PaperCommandManager;
 import de.kipotuzer26.slashC.commands.SlashC;
 import de.kipotuzer26.slashC.listener.Listeners;
+import de.kipotuzer26.slashC.util.PrimarySkinColor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import de.kipotuzer26.slashC.commands.TemplateCommands;
 import de.kipotuzer26.slashC.integrations.vault.VaultProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -61,6 +63,10 @@ public class Main extends JavaPlugin implements Listener {
 
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        for (Player player: Bukkit.getOnlinePlayers()) {
+            PrimarySkinColor.getPrimaryColor(player.getUniqueId());
+        }
     }
 
     public void onDisable() {
@@ -94,6 +100,7 @@ public class Main extends JavaPlugin implements Listener {
             getLogger().warning("Vault integration is not yet available.");
         }
     }
+
 
     private void setupCommands() {
 
